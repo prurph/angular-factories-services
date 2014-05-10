@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="dribbleScorer">
+<html ng-app="dribbbleScorer">
   <head>
     <title>Angular Refactoring</title>
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
@@ -7,7 +7,7 @@
     <script src="app.js"></script>
   </head>
   <body>
-    <div ng-controller="DribbleController">
+    <div ng-controller="DribbbleController">
       <div class="panel panel-default">
         <div class="panel-heading">Dribbble Player Scores</div>
         <div class="panel-body">
@@ -19,7 +19,10 @@
         </div>
         <ul class="list-group">
           <li class="list-group-item" ng-repeat="player in players">
-            {{player}}
+            {{player.name}} L:{{likeScore(player)}} C:{{commentScore(player)}}
+            <a href="" ng-click="removePlayer(player)">
+              <i class="glyphicon glyphicon-remove pull-right"></i>
+            </a>
           </li>
         </ul>
       </div>
