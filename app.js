@@ -4,30 +4,43 @@
 
 var app = angular.module('dribbbleScorer', []);
 
-app.controller('DribbbleController', function($scope, $http) {
+app.controller('DribbbleController', function($scope, DribbblePlayer) {
   $scope.newPlayer = null;
   $scope.players = [];
 
   $scope.addPlayer = function(player) {
-    $http.jsonp(
-      'http://api.dribbble.com/players/' + player + '?callback=JSON_CALLBACK'
-    ).success(function(dribbble_player) {
-      $scope.players.push(dribbble_player);
-    }
-    ).error(function(){
-      // handle errors
-    });
+    $scope.players.push(new DribbblePlayer(player));
   };
 
   $scope.removePlayer = function(player) {
     $scope.players.splice($scope.players.indexOf(player), 1);
   };
 
-  $scope.likeScore = function(player) {
-    return player.likes_received_count - player.likes_count;
+});
+
+app.factory('DribbblePlayer', function($http) {
+  var DribblePlayer = function(player) {
+    this.initialize = function() {
+      var url = 'http://api.dribbble.com/players/' + player + '?callback=JSON_CALLBACK';
+      var playerData = $http.jsonp(url);
+      var self = this; // this is constructed DribbblePlayer instance
+
+      // when $http promise resolves, extend this with reponse properties
+      playerData.then(function(response) {
+        angular.extend(self, response.data);
+      });
+    };
+
+    this.likeScore = function() {
+      return this.likes_received_count - this.likes_count;
+    };
+
+    this.commentScore = function() {
+      return this.comments_received_count - this.comments_count;
+    };
+
+    this.initialize();
   };
 
-  $scope.commentScore = function(player) {
-    return player.comments_received_count - player.comments_count;
-  };
+  return (DribblePlayer);
 });
